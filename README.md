@@ -30,3 +30,10 @@ The implementation uses a fixed window rather than a sliding one. That means the
 ## Awkward edge
 
 The window is advanced lazily on the next `tryReserve()` or `remaining()` call. If a budget sits unused for several window lengths, the first call after that gap starts a fresh window. Also, if the clock moves backwards, the budget treats it as still being inside the original window, so a backwards clock jump does not grant extra retries.
+
+## Performance
+
+The window keeps a bounded buffer, so `push` is constant time and memory does not
+grow with the length of the stream. `peak` and `trough` are linear in the window
+size, which is the trade that keeps `push` cheap.
+
